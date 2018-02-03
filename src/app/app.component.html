@@ -1,0 +1,127 @@
+
+<mat-toolbar color="primary">
+  TP-INFO802
+  <span style="flex: 1 1 auto"></span>
+  <button mat-button (click)="showDiagnostic = !showDiagnostic">
+    <ng-container *ngIf="!showDiagnostic">Afficher le diagnostique</ng-container>
+    <ng-container *ngIf="showDiagnostic">Cacher le diagnostique</ng-container>
+  </button>
+</mat-toolbar>
+
+<mat-progress-bar mode="indeterminate" *ngIf="loading" color="accent"></mat-progress-bar>
+
+<div style="display: flex;">
+  <mat-card style="flex: 1">
+    <mat-card-header>
+      <mat-card-title>Calculer la distance entre deux villes</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form class="example-form">
+        <mat-form-field class="example-full-width">
+          <input type="text" placeholder="Ville A" matInput [formControl]="myControl" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option.label">
+              {{ option.label }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </form>
+
+
+      <mat-form-field>
+        <mat-select  placeholder="Ville B" [(ngModel)]="villeB">
+          <mat-option *ngFor="let ville of villes" [value]="ville.lat+';'+ville.lon">
+            {{ ville.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-card-actions align="end">
+        <button mat-raised-button color="primary" (click)="getDistance()" [disabled]="loading">Calculer la distance</button>
+        <button mat-raised-button color="primary" (click)="getPrix()" [disabled]="loading">Calculer le prix</button>
+      </mat-card-actions>
+    </mat-card-content>
+  </mat-card>
+  <mat-card style="flex: 1">
+    <mat-card-header>
+      <mat-card-title>Distance</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-input-container>
+        <input matInput readonly [(ngModel)]="labelDistance" placeholder="{{resultLabelDistance}}">
+      </mat-input-container>
+    </mat-card-content>
+  </mat-card>
+  <mat-card style="flex: 1">
+    <mat-card-header>
+      <mat-card-title>Prix</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-input-container>
+        <input matInput readonly [(ngModel)]="labelPrix" placeholder="{{resultLabelPrix}}">
+      </mat-input-container>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div style="display: flex;">
+  <mat-card style="flex: 1">
+    <mat-card-header>
+      <mat-card-title>Convertisseur de devises</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-input-container>
+        <input matInput [(ngModel)]="inputPrix">
+      </mat-input-container>
+      <mat-form-field>
+        <mat-select placeholder="Monnaie A" [(ngModel)]="monnaieA">
+          <mat-option *ngFor="let monnaie of monnaies" [value]="monnaie.value">
+            {{ monnaie.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      →
+      <mat-form-field>
+        <mat-select  placeholder="Monnaie B" [(ngModel)]="monnaieB">
+          <mat-option *ngFor="let monnaie of monnaies" [value]="monnaie.value">
+            {{ monnaie.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-card-actions align="end">
+        <button mat-raised-button color="primary" (click)="getConvertedPrice()" [disabled]="loading">Convertir</button>
+      </mat-card-actions>
+    </mat-card-content>
+  </mat-card>
+  <mat-card style="flex: 1">
+    <mat-card-header>
+      <mat-card-title>Résultat de la conversion</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-input-container>
+        <input matInput readonly [(ngModel)]="labelConverted" placeholder="{{resultLabelConverted}}">
+      </mat-input-container>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div *ngIf="showDiagnostic">
+  <div style="display: flex; flex: 1 1 auto">
+    <mat-card style="flex: 1">
+      <mat-card-header>
+        <mat-card-title>XML Response</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        {{ xmlResponse }}
+      </mat-card-content>
+    </mat-card>
+    <mat-card style="flex: 1">
+      <mat-card-header>
+        <mat-card-title>JSON Response</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <pre>{{ jsonResponse | json }}</pre>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
