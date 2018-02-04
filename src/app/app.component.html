@@ -17,26 +17,26 @@
     </mat-card-header>
 
     <mat-card-content>
-      <form class="example-form">
-        <mat-form-field class="example-full-width">
-          <input type="text" placeholder="Ville A" matInput [formControl]="myControl" [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let option of filteredOptions | async" [value]="option.label">
-              {{ option.label }}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-      </form>
-
+      <mat-form-field style="margin-right:30px;">
+        <input type="text" placeholder="Ville A" matInput [formControl]="villeA" [matAutocomplete]="autoA">
+        <mat-autocomplete #autoA="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let ville of filteredOptionsVilleA | async" [value]="ville">
+            {{ ville.name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
 
       <mat-form-field>
-        <mat-select  placeholder="Ville B" [(ngModel)]="villeB">
-          <mat-option *ngFor="let ville of villes" [value]="ville.lat+';'+ville.lon">
-            {{ ville.label }}
+        <input type="text" placeholder="Ville B" matInput [formControl]="villeB" [matAutocomplete]="autoB">
+        <mat-autocomplete #autoB="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let ville of filteredOptionsVilleB | async" [value]="ville">
+            {{ ville.name }}
           </mat-option>
-        </mat-select>
+        </mat-autocomplete>
       </mat-form-field>
+
       <mat-card-actions align="end">
+        <button mat-raised-button color="primary" (click)="getJourneys()" [disabled]="loading">Afficher horaires de train</button>
         <button mat-raised-button color="primary" (click)="getDistance()" [disabled]="loading">Calculer la distance</button>
         <button mat-raised-button color="primary" (click)="getPrix()" [disabled]="loading">Calculer le prix</button>
       </mat-card-actions>

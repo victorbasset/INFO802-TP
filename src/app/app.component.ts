@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {DatePipe} from '@angular/common';
-import {Observable} from 'rxjs/Observable';
-import {FormControl} from '@angular/forms';
-import {map, startWith} from 'rxjs/operators';
+import { Observable } from 'rxjs/Observable';
+import { FormControl } from '@angular/forms';
+import { map, startWith } from 'rxjs/operators';
+import { ApiRestService } from './api-rest.service';
+import { Http } from '@angular/http';
+import { ApiSoapService } from './api-soap.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +13,6 @@ import {map, startWith} from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private datePipe: DatePipe) {}
-
-  villeA: string;
-  villeB: string;
   monnaieA: string;
   monnaieB: string;
   jsonResponse: any;
@@ -28,193 +27,163 @@ export class AppComponent implements OnInit {
   resultLabelDistance: string;
   resultLabelPrix: string;
   showDiagnostic = false;
-
-  villes = [
-    {lon: 5.93333,lat: 45.56667, label: 'Chambéry'},
-    {lon: 2.3488,lat: 48.85341, label: 'Paris'},
-    {lon: -3.70256,lat: 40.4165, label: 'Madrid'}
-  ];
+  apiRest = new ApiRestService(this.httpClient);
+  apiSoap = new ApiSoapService(this.httpClient);
 
   monnaies = [
   ];
 
-  myControl: FormControl = new FormControl();
-
-  options = [
-    'One',
-    'Two',
-    'Three'
+  villes: any[] = [
   ];
 
+  villeA: FormControl = new FormControl();
+  villeB: FormControl = new FormControl();
 
-  transformDate() {
-    return this.datePipe.transform(Date.now(), 'yyyy-MM-dd'); //whatever format you need.
-  }
-  filteredOptions: Observable<object>;
+  filteredOptionsVilleA: Observable<any[]>;
+  filteredOptionsVilleB: Observable<any[]>;
+
+  constructor(private http: Http, private httpClient: HttpClient) {}
 
   ngOnInit() {
-    this.filteredOptions = this.myControl.valueChanges
+    this.getCurrencies();
+    this.getVilles();
+    this.filteredOptionsVilleA = this.villeA.valueChanges
       .pipe(
         startWith(''),
-        map(val => this.filter(this.villes))
+        map(val => this.filter(val.toString()))
       );
-    this.getCurrencies();
+
+    this.filteredOptionsVilleB = this.villeB.valueChanges
+      .pipe(
+        startWith(''),
+        map(val => this.filter(val.toString()))
+      );
   }
 
-  filter(villes: object): object {
-    return villes;
+  displayFn(ville): string {
+    return ville ? ville.name : ville;
   }
 
+  filter(val: string): string[] {
+    if (val.length >= 2) {
+      return this.villes.filter(option => option.name.toLowerCase().indexOf(val.toLowerCase()) === 0)
+    } else {
+      return null
+    }
+  }
 
   getDistance() {
     this.clear();
     this.loading = true;
 
-    const xmlhttp = new XMLHttpRequest();
-    xmlhttp.open('POST', 'http://localhost:8080/INFO802_TP_SDP_war_exploded/services/SDP?wsdl', true);
-    // the following variable contains my xml soap request (that you can get thanks to SoapUI for example)
-    const sr =
-      `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tro="http://trouvetontrain/">
-         <soapenv:Header/>
-         <soapenv:Body>
-            <tro:getDistance>
-               <arg0>`+this.villeA.valueOf().split(';')[0]+`</arg0>
-               <arg1>`+this.villeA.valueOf().split(';')[1]+`</arg1>
-               <arg2>`+this.villeB.valueOf().split(';')[0]+`</arg2>
-               <arg3>`+this.villeB.valueOf().split(';')[1]+`</arg3>
-            </tro:getDistance>
-         </soapenv:Body>
-      </soapenv:Envelope>`;
+    const lat_v1 = parseFloat(this.villeA.value.lat);
+    const lon_v1 = parseFloat(this.villeA.value.lon);
+    const lat_v2 = parseFloat(this.villeB.value.lat);
+    const lon_v2 = parseFloat(this.villeB.value.lon);
 
-    // Send the POST request
-    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
-    xmlhttp.responseType = 'document';
-    xmlhttp.send(sr);
+    this.apiSoap.getDistance(lat_v1, lon_v1, lat_v2, lon_v2).then(
+      ({result, xml}) => {
+        this.xmlResponse = xml;
+        this.resultLabelDistance = (parseInt(result, 10) / 1000).toString() + ' km';
+        this.loading = false;
+      },
 
-    xmlhttp.onreadystatechange =  () => {
-      if (xmlhttp.readyState === 4) {
-        if (xmlhttp.status === 200) {
-          const xml = xmlhttp.responseXML;
-          this.xmlResponse = new XMLSerializer().serializeToString(xml);
-          const response_number = parseInt(xml.getElementsByTagName('return')[0].childNodes[0].nodeValue)/1000; // Here I'm getting the value contained by the <return> node
-          this.resultLabelDistance = response_number + ' km';
-          this.loading = false;
-        }
-      }
-    };
+    error => {
+        alert(error);
+        this.loading = false;
+      });
   }
-
 
   getPrix() {
     this.clear();
     this.loading = true;
 
-    const xmlhttp = new XMLHttpRequest();
-    xmlhttp.open('POST', 'http://localhost:8080/INFO802_TP_SDP_war_exploded/services/SDP?wsdl', true);
-    // the following variable contains my xml soap request (that you can get thanks to SoapUI for example)
-    const sr =
-      `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tro="http://trouvetontrain/">
-         <soapenv:Header/>
-         <soapenv:Body>
-            <tro:getDistancePrice>
-               <arg0>`+this.villeA.valueOf().split(';')[0]+`</arg0>
-               <arg1>`+this.villeA.valueOf().split(';')[1]+`</arg1>
-               <arg2>`+this.villeB.valueOf().split(';')[0]+`</arg2>
-               <arg3>`+this.villeB.valueOf().split(';')[1]+`</arg3>
-            </tro:getDistancePrice>
-         </soapenv:Body>
-      </soapenv:Envelope>`;
+    const lat_v1 = parseFloat(this.villeA.value.lat);
+    const lon_v1 = parseFloat(this.villeA.value.lon);
+    const lat_v2 = parseFloat(this.villeB.value.lat);
+    const lon_v2 = parseFloat(this.villeB.value.lon);
 
-    // Send the POST request
-    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
-    xmlhttp.responseType = 'document';
-    xmlhttp.send(sr);
-
-    xmlhttp.onreadystatechange =  () => {
-      if (xmlhttp.readyState === 4) {
-        if (xmlhttp.status === 200) {
-          const xml = xmlhttp.responseXML;
-          this.xmlResponse = new XMLSerializer().serializeToString(xml);
-          const response_number = xml.getElementsByTagName('return')[0].childNodes[0].nodeValue; // Here I'm getting the value contained by the <return> node
-          this.resultLabelPrix = response_number + ' €';
-          this.resultLabelPrixConvert = parseFloat(response_number);
-          this.inputPrix = response_number;
-          this.loading = false;
-        }
-      }
-    };
+    this.apiSoap.getPrix(lat_v1, lon_v1, lat_v2, lon_v2).then(
+      ({result, xml}) => {
+        this.xmlResponse = xml;
+        this.resultLabelPrix = result.toString() + ' €';
+        this.resultLabelPrixConvert = parseFloat(result.toString());
+        this.inputPrix = result.toString();
+        this.loading = false;
+      },
+      error => {
+        alert(error);
+        this.loading = false;
+      });
   }
 
   getConvertedPrice() {
     this.clear();
     this.loading = true;
+    const money_1 = this.monnaieA.valueOf();
+    const money_2 = this.monnaieB.valueOf();
+    const price = parseFloat(this.inputPrix.valueOf());
 
-    const xmlhttp = new XMLHttpRequest();
-    xmlhttp.open('POST', 'http://currencyconverter.kowabunga.net/converter.asmx?WSDL', true);
-    // the following variable contains my xml soap request (that you can get thanks to SoapUI for example)
-    const sr =
-      `<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tem="http://tempuri.org/">
-           <soap:Header/>
-           <soap:Body>
-              <tem:GetConversionAmount>
-                 <tem:CurrencyFrom>`+this.monnaieA.valueOf()+`</tem:CurrencyFrom>
-                 <tem:CurrencyTo>`+this.monnaieB.valueOf()+`</tem:CurrencyTo>
-                 <tem:RateDate>`+this.transformDate()+`</tem:RateDate>
-                 <tem:Amount>`+this.inputPrix.valueOf()+`</tem:Amount>
-              </tem:GetConversionAmount>
-           </soap:Body>
-        </soap:Envelope>`;
-
-    // Send the POST request
-    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
-    xmlhttp.responseType = 'document';
-    xmlhttp.send(sr);
-
-    xmlhttp.onreadystatechange =  () => {
-      if (xmlhttp.readyState === 4) {
-        if (xmlhttp.status === 200) {
-          const xml = xmlhttp.responseXML;
-          this.xmlResponse = new XMLSerializer().serializeToString(xml);
-          this.resultLabelConverted = xml.getElementsByTagName('GetConversionAmountResult')[0].childNodes[0].nodeValue; // Here I'm getting the value contained by the <return> node
-          this.loading = false;
-        }
-      }
-    };
+    this.apiSoap.getConvertedPrice(money_1, money_2, price).then(
+      ({result, xml}) => {
+        this.xmlResponse = xml;
+        this.resultLabelConverted = result.toString();
+        this.loading = false;
+      },
+      error => {
+        alert(error);
+        this.loading = false;
+      });
   }
 
   getCurrencies() {
-    const xmlhttp = new XMLHttpRequest();
-    xmlhttp.open('POST', 'http://currencyconverter.kowabunga.net/converter.asmx?WSDL', true);
-    // the following variable contains my xml soap request (that you can get thanks to SoapUI for example)
-    const sr =
-      `<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tem="http://tempuri.org/">
-         <soap:Header/>
-         <soap:Body>
-            <tem:GetCurrencies/>
-         </soap:Body>
-      </soap:Envelope>`;
+    this.clear();
 
-    // Send the POST request
-    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
-    xmlhttp.responseType = 'document';
-    xmlhttp.send(sr);
-
-    xmlhttp.onreadystatechange =  () => {
-      if (xmlhttp.readyState === 4) {
-        if (xmlhttp.status === 200) {
-          const xml = xmlhttp.responseXML;
-          this.xmlResponse = new XMLSerializer().serializeToString(xml);
-          const response = xml.getElementsByTagName('GetCurrenciesResult')[0]; // Here I'm getting the value contained by the <return> node
-          const arrayCurrencies = response.getElementsByTagName('string');
-          for(let i = 0; i< arrayCurrencies.length; i++){
-            if(arrayCurrencies[i].innerHTML == 'EUR'){
-              this.monnaieA = arrayCurrencies[i].innerHTML;
-            }
-            this.monnaies.push({value: arrayCurrencies[i].innerHTML, label: arrayCurrencies[i].innerHTML});
+    this.apiSoap.getCurrencies().then(
+      ({result, xml}) => {
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].innerHTML === 'EUR') {
+            this.monnaieA = result[i].innerHTML;
           }
+          this.monnaies.push({value: result[i].innerHTML, label: result[i].innerHTML});
         }
-      }
-    };
+        this.xmlResponse = xml;
+      },
+      error => {
+        alert(error);
+      });
+  }
+
+  getVilles() {
+    this.clear();
+    this.loading = true;
+
+    this.apiRest.getStopAreas().then(
+      (result) => {
+        this.villes = result[0].stop_areas;
+        this.jsonResponse = result;
+        this.loading = false;
+      },
+      error => {
+        alert(error);
+        this.loading = false;
+      });
+  }
+
+  getJourneys() {
+    this.clear();
+    this.loading = true;
+
+    this.apiRest.getJourneys(this.villeA.value.id, this.villeB.value.id, '20180204T120000').then(
+      (result) => {
+        console.log(result);
+        this.jsonResponse = result;
+        this.loading = false;
+      },
+      error => {
+        alert(error);
+        this.loading = false;
+      });
   }
 
   clear() {

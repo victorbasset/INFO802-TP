@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   MatButtonModule,
@@ -14,10 +15,12 @@ import {
 import { DatePipe } from '@angular/common';
 import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ApiRestService } from './api-rest.service';
+import { ApiSoapService } from './api-soap.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   imports: [
-
     MatAutocompleteModule,
     MatInputModule,
     MatSelectModule,
@@ -30,12 +33,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
+    HttpClientModule,
     BrowserAnimationsModule,
   ],
+  providers: [DatePipe, ApiRestService, ApiSoapService],
   declarations: [
     AppComponent
   ],
-  providers: [DatePipe],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  exports: [AppComponent]
 })
 export class AppModule { }
