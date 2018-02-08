@@ -6,6 +6,7 @@ import { ApiRestService } from './api-rest.service';
 import { Http } from '@angular/http';
 import { ApiSoapService } from './api-soap.service';
 import { HttpClient } from '@angular/common/http';
+import {baseServeCommandOptions} from '@angular/cli/commands/serve';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AppComponent implements OnInit {
 
+  showHoraires = false;
   monnaieA: string;
   monnaieB: string;
   jsonResponse: any;
@@ -35,6 +37,8 @@ export class AppComponent implements OnInit {
 
   villes: any[] = [
   ];
+
+  journeys: {};
 
   villeA: FormControl = new FormControl();
   villeB: FormControl = new FormControl();
@@ -172,11 +176,13 @@ export class AppComponent implements OnInit {
 
   getJourneys() {
     this.clear();
+    this.showHoraires = true;
     this.loading = true;
 
     this.apiRest.getJourneys(this.villeA.value.id, this.villeB.value.id, '20180204T120000').then(
       (result) => {
-        console.log(result);
+        this.journeys = result;
+        console.log(this.journeys);
         this.jsonResponse = result;
         this.loading = false;
       },

@@ -7,9 +7,13 @@ import {
   MatButtonModule,
   MatInputModule,
   MatCardModule,
+  MatIconModule,
+  MatExpansionModule,
   MatProgressBarModule,
   MatToolbarModule,
+  MatListModule,
   MatSelectModule,
+  MatStepperModule,
   MatAutocompleteModule
 } from '@angular/material';
 import { DatePipe } from '@angular/common';
@@ -21,7 +25,11 @@ import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   imports: [
+    MatStepperModule,
     MatAutocompleteModule,
+    MatListModule,
+    MatIconModule,
+    MatExpansionModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,

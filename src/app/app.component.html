@@ -1,3 +1,4 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <mat-toolbar color="primary">
   TP-INFO802
@@ -64,6 +65,36 @@
   </mat-card>
 </div>
 
+<div style="display: flex;"  *ngIf="showHoraires">
+  <mat-card style="flex: 1">
+    <mat-expansion-panel *ngFor="let journey of journeys">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ journey.type }}
+        </mat-panel-title>
+        <mat-panel-description>
+          Heure de départ : {{ journey.departure_date_time }}
+        </mat-panel-description>
+        <mat-panel-description>
+          Heure de d'arrivée : {{ journey.arrival_date_time }}
+        </mat-panel-description>
+        <mat-panel-description>
+          Durée : {{ journey.duration }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-horizontal-stepper>
+        <mat-step *ngFor="let section of journey.sections">
+          <ng-template matStepLabel>{{ section.type }}</ng-template>
+          You are now done.
+          <div>
+            <button mat-button matStepperPrevious>Back</button>
+          </div>
+        </mat-step>
+      </mat-horizontal-stepper>
+    </mat-expansion-panel>
+  </mat-card>
+</div>
+
 <div style="display: flex;">
   <mat-card style="flex: 1">
     <mat-card-header>
@@ -103,6 +134,7 @@
       </mat-input-container>
     </mat-card-content>
   </mat-card>
+
 </div>
 
 <div *ngIf="showDiagnostic">
