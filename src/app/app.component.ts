@@ -209,7 +209,6 @@ export class AppComponent implements OnInit {
         this.journeys = result;
         this.jsonResponse = result;
         this.loading = false;
-        console.log(this.journeys);
       },
       error => {
         alert(error);
