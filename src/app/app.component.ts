@@ -3,10 +3,10 @@ import { Observable } from 'rxjs/Observable';
 import { FormControl } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
 import { ApiRestService } from './api-rest.service';
-import { Http } from '@angular/http';
 import { ApiSoapService } from './api-soap.service';
-import { HttpClient } from '@angular/common/http';
-import {baseServeCommandOptions} from '@angular/cli/commands/serve';
+import {DatePipe} from '@angular/common';
+
+const datePipe = new DatePipe('FR');
 
 @Component({
   selector: 'app-root',
@@ -29,24 +29,24 @@ export class AppComponent implements OnInit {
   resultLabelDistance: string;
   resultLabelPrix: string;
   showDiagnostic = false;
-  apiRest = new ApiRestService(this.httpClient);
-  apiSoap = new ApiSoapService(this.httpClient);
 
   monnaies = [
   ];
 
   villes: any[] = [
   ];
+  datepicker: any = {start_time: new Date() };
 
   journeys: {};
 
   villeA: FormControl = new FormControl();
   villeB: FormControl = new FormControl();
+  dateInput: FormControl = new FormControl();
 
   filteredOptionsVilleA: Observable<any[]>;
   filteredOptionsVilleB: Observable<any[]>;
 
-  constructor(private http: Http, private httpClient: HttpClient) {}
+  constructor(private apiRest: ApiRestService,private apiSoap: ApiSoapService) {}
 
   ngOnInit() {
     this.getCurrencies();
@@ -174,12 +174,15 @@ export class AppComponent implements OnInit {
       });
   }
 
+  private transformDate(date : string) {
+    return datePipe.transform(date, 'yyyyMMddT000000');
+  }
+
   getJourneys() {
     this.clear();
     this.showHoraires = true;
     this.loading = true;
-
-    this.apiRest.getJourneys(this.villeA.value.id, this.villeB.value.id, '20180204T120000').then(
+    this.apiRest.getJourneys(this.villeA.value.id, this.villeB.value.id, this.transformDate(this.dateInput.value)).then(
       (result) => {
         this.journeys = result;
         console.log(this.journeys);

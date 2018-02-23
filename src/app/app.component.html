@@ -1,5 +1,9 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+<style>
+  .mat-horizontal-stepper-header{
+  pointer-events: none !important;
+}
+</style>
 <mat-toolbar color="primary">
   TP-INFO802
   <span style="flex: 1 1 auto"></span>
@@ -36,6 +40,12 @@
         </mat-autocomplete>
       </mat-form-field>
 
+      <mat-form-field>
+        <input matInput [matDatepicker]="picker" [formControl]="dateInput" [(ngModel)]="datepicker.start_time" placeholder="Choisir une date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
       <mat-card-actions align="end">
         <button mat-raised-button color="primary" (click)="getJourneys()" [disabled]="loading">Afficher horaires de train</button>
         <button mat-raised-button color="primary" (click)="getDistance()" [disabled]="loading">Calculer la distance</button>
@@ -67,27 +77,49 @@
 
 <div style="display: flex;"  *ngIf="showHoraires">
   <mat-card style="flex: 1">
+    <div style="margin-bottom: 10px;">Voyages</div>
     <mat-expansion-panel *ngFor="let journey of journeys">
       <mat-expansion-panel-header>
-        <mat-panel-title>
-          {{ journey.type }}
+        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'best'">
+          <mat-icon>grade</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le meilleur</div>
+        </mat-panel-title>
+        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'rapid'">
+          <mat-icon>timer</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le plus rapide</div>
+        </mat-panel-title>
+        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'comfort'">
+          <mat-icon>weekend</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le plus confortable</div>
+        </mat-panel-title>
+        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'less_fallback_walk'">
+          <mat-icon>child_care</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le moins fatiguant</div>
         </mat-panel-title>
         <mat-panel-description>
-          Heure de départ : {{ journey.departure_date_time }}
+          Heure de départ : {{ journey.departure_date_time | date:'dd/MM/yyyy HH:mm:ss' }}
         </mat-panel-description>
         <mat-panel-description>
-          Heure de d'arrivée : {{ journey.arrival_date_time }}
+          Heure d'arrivée : {{ journey.arrival_date_time | date:'dd/MM/yyyy HH:mm:ss' }}
         </mat-panel-description>
         <mat-panel-description>
-          Durée : {{ journey.duration }}
+          Durée : {{ journey.duration | hoursMinutesSeconds }}
+        </mat-panel-description>
+        <mat-panel-description>
+          Distance : -- km
+        </mat-panel-description>
+        <mat-panel-description>
+          Prix : -- €
         </mat-panel-description>
       </mat-expansion-panel-header>
       <mat-horizontal-stepper>
-        <mat-step *ngFor="let section of journey.sections">
-          <ng-template matStepLabel>{{ section.type }}</ng-template>
-          You are now done.
+        <mat-step *ngFor="let section of journey.sections;let i = index;" [completed]="false">
+          <ng-template matStepLabel *ngIf="i == 0 && section.type == 'crow_fly'" >Départ</ng-template>
+          <ng-template matStepLabel *ngIf="section.type == 'public_transport'" >Transport public</ng-template>
+          <ng-template matStepLabel *ngIf="section.type == 'transfer'" >Transfert</ng-template>
+          <ng-template matStepLabel *ngIf="section.type == 'waiting'" >Attente</ng-template>
+          <ng-template matStepLabel *ngIf="i != 0 && section.type == 'crow_fly'" >Arrivée</ng-template>
+          <div *ngIf="section.from?.name != null">
+            {{ section.from?.name }} → {{ section.to?.name }}
+          </div>
           <div>
-            <button mat-button matStepperPrevious>Back</button>
+            Départ : {{ section.departure_date_time | date:'dd/MM/yyyy HH:mm:ss' }} - Arrivée : {{ section.arrival_date_time | date:'dd/MM/yyyy HH:mm:ss' }}
           </div>
         </mat-step>
       </mat-horizontal-stepper>
