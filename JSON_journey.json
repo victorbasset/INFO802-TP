@@ -1,0 +1,531 @@
+[
+  {
+    "sections": [
+      {
+        "from": {
+          "embedded_type": "stop_area",
+          "stop_area": {
+            "codes": [
+              {
+                "type": "CR-CI-CH",
+                "value": "0087-271007-BV"
+              }
+            ],
+            "name": "Paris Gare du Nord",
+            "links": [],
+            "coord": {
+              "lat": "48.880141",
+              "lon": "2.354906"
+            },
+            "label": "Paris Gare du Nord (Paris)",
+            "administrative_regions": [
+              {
+                "insee": "75056",
+                "name": "Paris",
+                "level": 8,
+                "coord": {
+                  "lat": "48.856609",
+                  "lon": "2.351499"
+                },
+                "label": "Paris (75001-75116)",
+                "id": "admin:fr:75056",
+                "zip_code": "75001;75116"
+              },
+              {
+                "insee": "75110",
+                "name": "Paris 10e Arrondissement",
+                "level": 9,
+                "coord": {
+                  "lat": "48.876106",
+                  "lon": "2.35991"
+                },
+                "label": "Paris 10e Arrondissement (75010)",
+                "id": "admin:fr:75110",
+                "zip_code": "75010"
+              }
+            ],
+            "timezone": "Europe/Paris",
+            "id": "stop_area:OCE:SA:87271007"
+          },
+          "quality": 0,
+          "name": "Paris Gare du Nord (Paris)",
+          "id": "stop_area:OCE:SA:87271007"
+        },
+        "links": [],
+        "arrival_date_time": "20180223T000600",
+        "departure_date_time": "20180223T000600",
+        "to": {
+          "embedded_type": "stop_point",
+          "stop_point": {
+            "name": "Gare-du-Nord",
+            "links": [],
+            "coord": {
+              "lat": "48.880195",
+              "lon": "2.354892"
+            },
+            "label": "Gare-du-Nord (Paris)",
+            "equipments": [],
+            "administrative_regions": [
+              {
+                "insee": "75056",
+                "name": "Paris",
+                "level": 8,
+                "coord": {
+                  "lat": "48.856609",
+                  "lon": "2.351499"
+                },
+                "label": "Paris (75001-75116)",
+                "id": "admin:fr:75056",
+                "zip_code": "75001;75116"
+              },
+              {
+                "insee": "75110",
+                "name": "Paris 10e Arrondissement",
+                "level": 9,
+                "coord": {
+                  "lat": "48.876106",
+                  "lon": "2.35991"
+                },
+                "label": "Paris 10e Arrondissement (75010)",
+                "id": "admin:fr:75110",
+                "zip_code": "75010"
+              }
+            ],
+            "id": "stop_point:OCE:SP:RERD-87271023",
+            "stop_area": {
+              "codes": [
+                {
+                  "type": "CR-CI-CH",
+                  "value": "0087-271007-BV"
+                }
+              ],
+              "name": "Paris Gare du Nord",
+              "links": [],
+              "coord": {
+                "lat": "48.880141",
+                "lon": "2.354906"
+              },
+              "label": "Paris Gare du Nord (Paris)",
+              "timezone": "Europe/Paris",
+              "id": "stop_area:OCE:SA:87271007"
+            }
+          },
+          "quality": 0,
+          "name": "Gare-du-Nord (Paris)",
+          "id": "stop_point:OCE:SP:RERD-87271023"
+        },
+        "co2_emission": {
+          "value": 0,
+          "unit": ""
+        },
+        "duration": 0,
+        "type": "crow_fly",
+        "id": "section_17_0",
+        "mode": "walking"
+      },
+      {
+        "from": {
+          "embedded_type": "stop_point",
+          "stop_point": {
+            "name": "Gare-du-Nord",
+            "links": [],
+            "coord": {
+              "lat": "48.880195",
+              "lon": "2.354892"
+            },
+            "label": "Gare-du-Nord (Paris)",
+            "equipments": [],
+            "administrative_regions": [
+              {
+                "insee": "75056",
+                "name": "Paris",
+                "level": 8,
+                "coord": {
+                  "lat": "48.856609",
+                  "lon": "2.351499"
+                },
+                "label": "Paris (75001-75116)",
+                "id": "admin:fr:75056",
+                "zip_code": "75001;75116"
+              },
+              {
+                "insee": "75110",
+                "name": "Paris 10e Arrondissement",
+                "level": 9,
+                "coord": {
+                  "lat": "48.876106",
+                  "lon": "2.35991"
+                },
+                "label": "Paris 10e Arrondissement (75010)",
+                "id": "admin:fr:75110",
+                "zip_code": "75010"
+              }
+            ],
+            "id": "stop_point:OCE:SP:RERD-87271023",
+            "stop_area": {
+              "codes": [
+                {
+                  "type": "CR-CI-CH",
+                  "value": "0087-271007-BV"
+                }
+              ],
+              "name": "Paris Gare du Nord",
+              "links": [],
+              "coord": {
+                "lat": "48.880141",
+                "lon": "2.354906"
+              },
+              "label": "Paris Gare du Nord (Paris)",
+              "timezone": "Europe/Paris",
+              "id": "stop_area:OCE:SA:87271007"
+            }
+          },
+          "quality": 0,
+          "name": "Gare-du-Nord (Paris)",
+          "id": "stop_point:OCE:SP:RERD-87271023"
+        },
+        "links": [
+          {
+            "type": "vehicle_journey",
+            "id": "vehicle_journey:OCE:SN156498F03004"
+          },
+          {
+            "type": "line",
+            "id": "line:OCE:SN-87545244-87164780"
+          },
+          {
+            "type": "route",
+            "id": "route:OCE:SN-RERD-87164780-87545244"
+          },
+          {
+            "type": "commercial_mode",
+            "id": "commercial_mode:rer"
+          },
+          {
+            "type": "physical_mode",
+            "id": "physical_mode:RapidTransit"
+          },
+          {
+            "type": "network",
+            "id": "network:sncf"
+          }
+        ],
+        "arrival_date_time": "20180223T001500",
+        "additional_informations": [
+          "regular"
+        ],
+        "departure_date_time": "20180223T000600",
+        "display_informations": {
+          "direction": "Juvisy (Juvisy-sur-Orge)",
+          "code": "D",
+          "network": "SNCF",
+          "links": [],
+          "color": "5E9620",
+          "name": "Juvisy - Stade-France-St-Denis",
+          "physical_mode": "Train de banlieue / RER",
+          "headsign": "156498",
+          "label": "D",
+          "equipments": [],
+          "text_color": "",
+          "commercial_mode": "RER",
+          "description": ""
+        },
+        "to": {
+          "embedded_type": "stop_point",
+          "stop_point": {
+            "name": "Gare-de-Lyon-RER-D",
+            "links": [],
+            "coord": {
+              "lat": "48.844565",
+              "lon": "2.371929"
+            },
+            "label": "Gare-de-Lyon-RER-D (Paris)",
+            "equipments": [],
+            "administrative_regions": [
+              {
+                "insee": "75112",
+                "name": "Paris 12e Arrondissement",
+                "level": 9,
+                "coord": {
+                  "lat": "48.839615",
+                  "lon": "2.395751"
+                },
+                "label": "Paris 12e Arrondissement (75012)",
+                "id": "admin:fr:75112",
+                "zip_code": "75012"
+              },
+              {
+                "insee": "75056",
+                "name": "Paris",
+                "level": 8,
+                "coord": {
+                  "lat": "48.856609",
+                  "lon": "2.351499"
+                },
+                "label": "Paris (75001-75116)",
+                "id": "admin:fr:75056",
+                "zip_code": "75001;75116"
+              }
+            ],
+            "id": "stop_point:OCE:SP:RERD-87686030",
+            "stop_area": {
+              "codes": [
+                {
+                  "type": "CR-CI-CH",
+                  "value": "0087-686006-BV"
+                }
+              ],
+              "name": "Paris-Gare-de-Lyon",
+              "links": [],
+              "coord": {
+                "lat": "48.844924",
+                "lon": "2.373481"
+              },
+              "label": "Paris-Gare-de-Lyon (Paris)",
+              "timezone": "Europe/Paris",
+              "id": "stop_area:OCE:SA:87686006"
+            }
+          },
+          "quality": 0,
+          "name": "Gare-de-Lyon-RER-D (Paris)",
+          "id": "stop_point:OCE:SP:RERD-87686030"
+        },
+        "base_arrival_date_time": "20180223T001500",
+        "base_departure_date_time": "20180223T000600",
+        "co2_emission": {
+          "value": 29.4748,
+          "unit": "gEC"
+        },
+        "geojson": {
+          "type": "LineString",
+          "properties": [
+            {
+              "length": 4754
+            }
+          ],
+          "coordinates": [
+            [
+              2.354892,
+              48.880195
+            ],
+            [
+              2.348088,
+              48.859795
+            ],
+            [
+              2.371929,
+              48.844565
+            ]
+          ]
+        },
+        "duration": 540,
+        "type": "public_transport",
+        "id": "section_18_0",
+        "data_freshness": "base_schedule",
+        "stop_date_times": [
+          {
+            "stop_point": {
+              "name": "Gare-du-Nord",
+              "links": [],
+              "coord": {
+                "lat": "48.880195",
+                "lon": "2.354892"
+              },
+              "label": "Gare-du-Nord (Paris)",
+              "equipments": [],
+              "id": "stop_point:OCE:SP:RERD-87271023"
+            },
+            "links": [],
+            "arrival_date_time": "20180223T000500",
+            "additional_informations": [],
+            "departure_date_time": "20180223T000600",
+            "base_arrival_date_time": "20180223T000500",
+            "base_departure_date_time": "20180223T000600"
+          },
+          {
+            "stop_point": {
+              "name": "Châtelet-les-Halles",
+              "links": [],
+              "coord": {
+                "lat": "48.859795",
+                "lon": "2.348088"
+              },
+              "label": "Châtelet-les-Halles (Paris)",
+              "equipments": [],
+              "id": "stop_point:OCE:SP:RERD-87758607"
+            },
+            "links": [],
+            "arrival_date_time": "20180223T000900",
+            "additional_informations": [],
+            "departure_date_time": "20180223T001000",
+            "base_arrival_date_time": "20180223T000900",
+            "base_departure_date_time": "20180223T001000"
+          },
+          {
+            "stop_point": {
+              "name": "Gare-de-Lyon-RER-D",
+              "links": [],
+              "coord": {
+                "lat": "48.844565",
+                "lon": "2.371929"
+              },
+              "label": "Gare-de-Lyon-RER-D (Paris)",
+              "equipments": [],
+              "id": "stop_point:OCE:SP:RERD-87686030"
+            },
+            "links": [],
+            "arrival_date_time": "20180223T001500",
+            "additional_informations": [],
+            "departure_date_time": "20180223T001600",
+            "base_arrival_date_time": "20180223T001500",
+            "base_departure_date_time": "20180223T001600"
+          }
+        ]
+      },
+      {
+        "from": {
+          "embedded_type": "stop_point",
+          "stop_point": {
+            "name": "Gare-de-Lyon-RER-D",
+            "links": [],
+            "coord": {
+              "lat": "48.844565",
+              "lon": "2.371929"
+            },
+            "label": "Gare-de-Lyon-RER-D (Paris)",
+            "equipments": [],
+            "administrative_regions": [
+              {
+                "insee": "75112",
+                "name": "Paris 12e Arrondissement",
+                "level": 9,
+                "coord": {
+                  "lat": "48.839615",
+                  "lon": "2.395751"
+                },
+                "label": "Paris 12e Arrondissement (75012)",
+                "id": "admin:fr:75112",
+                "zip_code": "75012"
+              },
+              {
+                "insee": "75056",
+                "name": "Paris",
+                "level": 8,
+                "coord": {
+                  "lat": "48.856609",
+                  "lon": "2.351499"
+                },
+                "label": "Paris (75001-75116)",
+                "id": "admin:fr:75056",
+                "zip_code": "75001;75116"
+              }
+            ],
+            "id": "stop_point:OCE:SP:RERD-87686030",
+            "stop_area": {
+              "codes": [
+                {
+                  "type": "CR-CI-CH",
+                  "value": "0087-686006-BV"
+                }
+              ],
+              "name": "Paris-Gare-de-Lyon",
+              "links": [],
+              "coord": {
+                "lat": "48.844924",
+                "lon": "2.373481"
+              },
+              "label": "Paris-Gare-de-Lyon (Paris)",
+              "timezone": "Europe/Paris",
+              "id": "stop_area:OCE:SA:87686006"
+            }
+          },
+          "quality": 0,
+          "name": "Gare-de-Lyon-RER-D (Paris)",
+          "id": "stop_point:OCE:SP:RERD-87686030"
+        },
+        "links": [],
+        "arrival_date_time": "20180223T002618",
+        "departure_date_time": "20180223T001500",
+        "to": {
+          "embedded_type": "stop_area",
+          "stop_area": {
+            "codes": [
+              {
+                "type": "CR-CI-CH",
+                "value": "0087-547000-BV"
+              }
+            ],
+            "name": "Paris-Austerlitz",
+            "links": [],
+            "coord": {
+              "lat": "48.841655",
+              "lon": "2.366058"
+            },
+            "label": "Paris-Austerlitz (Paris)",
+            "administrative_regions": [
+              {
+                "insee": "75056",
+                "name": "Paris",
+                "level": 8,
+                "coord": {
+                  "lat": "48.856609",
+                  "lon": "2.351499"
+                },
+                "label": "Paris (75001-75116)",
+                "id": "admin:fr:75056",
+                "zip_code": "75001;75116"
+              },
+              {
+                "insee": "75113",
+                "name": "Paris 13e Arrondissement",
+                "level": 9,
+                "coord": {
+                  "lat": "48.832397",
+                  "lon": "2.355582"
+                },
+                "label": "Paris 13e Arrondissement (75013)",
+                "id": "admin:fr:75113",
+                "zip_code": "75013"
+              }
+            ],
+            "timezone": "Europe/Paris",
+            "id": "stop_area:OCE:SA:87547000"
+          },
+          "quality": 0,
+          "name": "Paris-Austerlitz (Paris)",
+          "id": "stop_area:OCE:SA:87547000"
+        },
+        "co2_emission": {
+          "value": 0,
+          "unit": ""
+        },
+        "geojson": {
+          "type": "LineString",
+          "properties": [
+            {
+              "length": 538
+            }
+          ],
+          "coordinates": [
+            [
+              2.371929,
+              48.844565
+            ],
+            [
+              2.366058,
+              48.841655
+            ]
+          ]
+        },
+        "duration": 678,
+        "type": "crow_fly",
+        "id": "section_19_0",
+        "mode": "walking"
+      }
+    ],
+    "type": "best",
+    "departure_date_time": "20180223T000600",
+    "arrival_date_time": "20180223T002618",
+    "duration": 1218
+  }
+]

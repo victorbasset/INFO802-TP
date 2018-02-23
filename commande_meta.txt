@@ -1,0 +1,2 @@
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --ignore-certificate-errors --disable-web-security --user-data-dir="C:/ChromeDevSession"

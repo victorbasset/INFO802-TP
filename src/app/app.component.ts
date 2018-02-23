@@ -5,6 +5,7 @@ import { map, startWith } from 'rxjs/operators';
 import { ApiRestService } from './api-rest.service';
 import { ApiSoapService } from './api-soap.service';
 import {DatePipe} from '@angular/common';
+import { AngularFireDatabase } from 'angularfire2/database';
 
 const datePipe = new DatePipe('FR');
 
@@ -14,7 +15,9 @@ const datePipe = new DatePipe('FR');
 })
 export class AppComponent implements OnInit {
 
+  showV1 = false;
   showHoraires = false;
+  monnaieAll: string;
   monnaieA: string;
   monnaieB: string;
   jsonResponse: any;
@@ -29,6 +32,7 @@ export class AppComponent implements OnInit {
   resultLabelDistance: string;
   resultLabelPrix: string;
   showDiagnostic = false;
+  monnaieCurrent = null;
 
   monnaies = [
   ];
@@ -39,6 +43,8 @@ export class AppComponent implements OnInit {
 
   journeys: {};
 
+  journeysCloud: Observable<any[]>;
+
   villeA: FormControl = new FormControl();
   villeB: FormControl = new FormControl();
   dateInput: FormControl = new FormControl();
@@ -46,9 +52,10 @@ export class AppComponent implements OnInit {
   filteredOptionsVilleA: Observable<any[]>;
   filteredOptionsVilleB: Observable<any[]>;
 
-  constructor(private apiRest: ApiRestService,private apiSoap: ApiSoapService) {}
+  constructor(private apiRest: ApiRestService, private apiSoap: ApiSoapService, private db: AngularFireDatabase) {}
 
   ngOnInit() {
+    this.journeysCloud = this.getJourneysCloud();
     this.getCurrencies();
     this.getVilles();
     this.filteredOptionsVilleA = this.villeA.valueChanges
@@ -147,7 +154,7 @@ export class AppComponent implements OnInit {
       ({result, xml}) => {
         for (let i = 0; i < result.length; i++) {
           if (result[i].innerHTML === 'EUR') {
-            this.monnaieA = result[i].innerHTML;
+            this.monnaieAll = result[i].innerHTML;
           }
           this.monnaies.push({value: result[i].innerHTML, label: result[i].innerHTML});
         }
@@ -174,7 +181,7 @@ export class AppComponent implements OnInit {
       });
   }
 
-  private transformDate(date : string) {
+  private transformDate(date: string) {
     return datePipe.transform(date, 'yyyyMMddT000000');
   }
 
@@ -182,12 +189,27 @@ export class AppComponent implements OnInit {
     this.clear();
     this.showHoraires = true;
     this.loading = true;
+    if ( this.monnaieAll !== 'EUR') {
+      this.loading = true;
+      const prix = document.querySelectorAll('.prix-convert');
+      Array.prototype.forEach.call(prix,  (elements, index, array) => {
+        this.apiSoap.getConvertedPrice(this.monnaieAll, 'EUR', elements.innerHTML).then(
+          ({result, xml}) => {
+            this.xmlResponse = xml;
+            elements.innerHTML = result;
+            if (index === array.length - 1) {
+              this.monnaieAll = 'EUR';
+            }
+          }
+        );
+      });
+    }
     this.apiRest.getJourneys(this.villeA.value.id, this.villeB.value.id, this.transformDate(this.dateInput.value)).then(
       (result) => {
         this.journeys = result;
-        console.log(this.journeys);
         this.jsonResponse = result;
         this.loading = false;
+        console.log(this.journeys);
       },
       error => {
         alert(error);
@@ -203,4 +225,84 @@ export class AppComponent implements OnInit {
     this.xmlResponse = undefined;
   }
 
+  private getJourneysCloud(): Observable<any[]> {
+    return this.db.list('journeys').snapshotChanges().map(actions => {
+      return actions.map(a => {
+        const data = a.payload.val();
+        const id = a.payload;
+        return { id, ...data };
+      });
+    });
+  }
+
+  pushJourney(journey) {
+    if ( this.monnaieAll !== 'EUR') {
+      this.loading = true;
+      const prix = document.querySelectorAll('.prix-convert');
+      Array.prototype.forEach.call(prix,  (elements, index, array) => {
+        this.apiSoap.getConvertedPrice(this.monnaieAll, 'EUR', elements.innerHTML).then(
+          ({result, xml}) => {
+            this.xmlResponse = xml;
+            elements.innerHTML = result;
+            if (index === array.length - 1) {
+              this.monnaieAll = 'EUR';
+              this.loading = false;
+              this.db.list('journeys').push(journey);
+            }
+          }
+        );
+      });
+    }else {
+      this.db.list('journeys').push(journey);
+    }
+  }
+
+  deleteJourney(journey) {
+    if ( this.monnaieAll !== 'EUR') {
+      this.loading = true;
+      const prix = document.querySelectorAll('.prix-convert');
+      Array.prototype.forEach.call(prix,  (elements, index, array) => {
+        this.apiSoap.getConvertedPrice(this.monnaieAll, 'EUR', elements.innerHTML).then(
+          ({result, xml}) => {
+            this.xmlResponse = xml;
+            elements.innerHTML = result;
+            if (index === array.length - 1) {
+              this.monnaieAll = 'EUR';
+              this.loading = false;
+              this.db.object('journeys/' + journey.id.key).remove();
+            }
+          }
+        );
+      });
+    }else {
+      this.db.object('journeys/' + journey.id.key).remove();
+    }
+  }
+
+  getCurrentMonnaie() {
+    this.monnaieCurrent = this.monnaieAll.valueOf();
+  }
+
+  convert() {
+    this.clear();
+    if ( this.monnaieCurrent !== this.monnaieAll ) {
+      this.loading = true;
+      const prix = document.querySelectorAll('.prix-convert');
+      Array.prototype.forEach.call(prix,  (elements, index, array) => {
+        this.apiSoap.getConvertedPrice(this.monnaieCurrent, this.monnaieAll, elements.innerHTML).then(
+          ({result, xml}) => {
+            this.xmlResponse = xml;
+            elements.innerHTML = result;
+            if (index === array.length - 1) {
+              this.loading = false;
+            }
+          }
+        );
+      });
+    }
+  }
+
+  foo(event: Event) {
+    event.stopPropagation();
+  }
 }

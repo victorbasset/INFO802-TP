@@ -6,6 +6,10 @@
 </style>
 <mat-toolbar color="primary">
   TP-INFO802
+  <button mat-button (click)="showV1 = !showV1">
+    <ng-container *ngIf="!showV1">Version 2.0</ng-container>
+    <ng-container *ngIf="showV1">Version 1.0</ng-container>
+  </button>
   <span style="flex: 1 1 auto"></span>
   <button mat-button (click)="showDiagnostic = !showDiagnostic">
     <ng-container *ngIf="!showDiagnostic">Afficher le diagnostique</ng-container>
@@ -40,20 +44,20 @@
         </mat-autocomplete>
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field *ngIf="!showV1">
         <input matInput [matDatepicker]="picker" [formControl]="dateInput" [(ngModel)]="datepicker.start_time" placeholder="Choisir une date">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
 
       <mat-card-actions align="end">
-        <button mat-raised-button color="primary" (click)="getJourneys()" [disabled]="loading">Afficher horaires de train</button>
-        <button mat-raised-button color="primary" (click)="getDistance()" [disabled]="loading">Calculer la distance</button>
-        <button mat-raised-button color="primary" (click)="getPrix()" [disabled]="loading">Calculer le prix</button>
+        <button mat-raised-button color="primary" (click)="getJourneys()" [disabled]="loading" *ngIf="!showV1">Afficher horaires de train</button>
+        <button mat-raised-button color="primary" (click)="getDistance()" [disabled]="loading" *ngIf="showV1">Calculer la distance</button>
+        <button mat-raised-button color="primary" (click)="getPrix()" [disabled]="loading" *ngIf="showV1">Calculer le prix</button>
       </mat-card-actions>
     </mat-card-content>
   </mat-card>
-  <mat-card style="flex: 1">
+  <mat-card style="flex: 1" *ngIf="showV1">
     <mat-card-header>
       <mat-card-title>Distance</mat-card-title>
     </mat-card-header>
@@ -63,7 +67,7 @@
       </mat-input-container>
     </mat-card-content>
   </mat-card>
-  <mat-card style="flex: 1">
+  <mat-card style="flex: 1" *ngIf="showV1">
     <mat-card-header>
       <mat-card-title>Prix</mat-card-title>
     </mat-card-header>
@@ -75,59 +79,7 @@
   </mat-card>
 </div>
 
-<div style="display: flex;"  *ngIf="showHoraires">
-  <mat-card style="flex: 1">
-    <div style="margin-bottom: 10px;">Voyages</div>
-    <mat-expansion-panel *ngFor="let journey of journeys">
-      <mat-expansion-panel-header>
-        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'best'">
-          <mat-icon>grade</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le meilleur</div>
-        </mat-panel-title>
-        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'rapid'">
-          <mat-icon>timer</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le plus rapide</div>
-        </mat-panel-title>
-        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'comfort'">
-          <mat-icon>weekend</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le plus confortable</div>
-        </mat-panel-title>
-        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'less_fallback_walk'">
-          <mat-icon>child_care</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le moins fatiguant</div>
-        </mat-panel-title>
-        <mat-panel-description>
-          Heure de départ : {{ journey.departure_date_time | date:'dd/MM/yyyy HH:mm:ss' }}
-        </mat-panel-description>
-        <mat-panel-description>
-          Heure d'arrivée : {{ journey.arrival_date_time | date:'dd/MM/yyyy HH:mm:ss' }}
-        </mat-panel-description>
-        <mat-panel-description>
-          Durée : {{ journey.duration | hoursMinutesSeconds }}
-        </mat-panel-description>
-        <mat-panel-description>
-          Distance : -- km
-        </mat-panel-description>
-        <mat-panel-description>
-          Prix : -- €
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <mat-horizontal-stepper>
-        <mat-step *ngFor="let section of journey.sections;let i = index;" [completed]="false">
-          <ng-template matStepLabel *ngIf="i == 0 && section.type == 'crow_fly'" >Départ</ng-template>
-          <ng-template matStepLabel *ngIf="section.type == 'public_transport'" >Transport public</ng-template>
-          <ng-template matStepLabel *ngIf="section.type == 'transfer'" >Transfert</ng-template>
-          <ng-template matStepLabel *ngIf="section.type == 'waiting'" >Attente</ng-template>
-          <ng-template matStepLabel *ngIf="i != 0 && section.type == 'crow_fly'" >Arrivée</ng-template>
-          <div *ngIf="section.from?.name != null">
-            {{ section.from?.name }} → {{ section.to?.name }}
-          </div>
-          <div>
-            Départ : {{ section.departure_date_time | date:'dd/MM/yyyy HH:mm:ss' }} - Arrivée : {{ section.arrival_date_time | date:'dd/MM/yyyy HH:mm:ss' }}
-          </div>
-        </mat-step>
-      </mat-horizontal-stepper>
-    </mat-expansion-panel>
-  </mat-card>
-</div>
-
-<div style="display: flex;">
+<div style="display: flex;" *ngIf="showV1">
   <mat-card style="flex: 1">
     <mat-card-header>
       <mat-card-title>Convertisseur de devises</mat-card-title>
@@ -166,7 +118,138 @@
       </mat-input-container>
     </mat-card-content>
   </mat-card>
+</div>
 
+
+<div style="display: flex;max-width: 100%"  *ngIf="!showV1" >
+  <mat-card style="flex: 1">
+    <mat-card-header>
+      <mat-card-title>Recherche de voyage</mat-card-title>
+    </mat-card-header>
+    <mat-expansion-panel *ngFor="let journey of journeys">
+      <mat-expansion-panel-header style="min-height: 70px;">
+        <mat-panel-title style="width: 300px;">
+          {{ journey.sections[0].from.stop_area.name }} → {{ journey.sections[journey.sections.length - 1].to.stop_area.name }}
+        </mat-panel-title>
+        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'best'">
+          <mat-icon>grade</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le meilleur</div>
+        </mat-panel-title>
+        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'rapid' || journey.type == 'fastest'">
+          <mat-icon>timer</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le plus rapide</div>
+        </mat-panel-title>
+        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'comfort'">
+          <mat-icon>weekend</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le plus confortable</div>
+        </mat-panel-title>
+        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'less_fallback_walk'">
+          <mat-icon>child_care</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le moins fatiguant</div>
+        </mat-panel-title>
+        <mat-panel-description>
+          Heure de départ : {{ journey.departure_date_time | date:'dd/MM/yyyy HH:mm:ss' }}
+        </mat-panel-description>
+        <mat-panel-description>
+          Heure d'arrivée : {{ journey.arrival_date_time | date:'dd/MM/yyyy HH:mm:ss' }}
+        </mat-panel-description>
+        <mat-panel-description>
+          Durée : {{ journey.duration | hoursMinutesSeconds }}
+        </mat-panel-description>
+        <mat-panel-description>
+          Distance : {{ journey.distance }} km
+        </mat-panel-description>
+        <mat-panel-description >
+          Prix : <span class="prix-convert" style="margin-left: 3px">{{ journey.prix }}</span>
+          <mat-select (click)="foo($event);getCurrentMonnaie()" (onClose)="convert()" [(ngModel)]="monnaieAll" style="margin-left:10px;max-width: 60px;max-height: 10px;">
+            <mat-option *ngFor="let monnaie of monnaies" [value]="monnaie.value">
+              {{ monnaie.label }}
+            </mat-option>
+          </mat-select>
+        </mat-panel-description>
+        <mat-panel-description>
+          <button mat-raised-button color="primary" (click)="foo($event); pushJourney(journey);" [disabled]="loading">Enregistrer</button>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-horizontal-stepper>
+        <mat-step *ngFor="let section of journey.sections;let i = index;" [completed]="false">
+          <ng-template matStepLabel *ngIf="i == 0 && section.type == 'crow_fly'" >Départ</ng-template>
+          <ng-template matStepLabel *ngIf="section.type == 'public_transport'" >Transport public</ng-template>
+          <ng-template matStepLabel *ngIf="section.type == 'transfer'" >Transfert</ng-template>
+          <ng-template matStepLabel *ngIf="section.type == 'waiting'" >Attente</ng-template>
+          <ng-template matStepLabel *ngIf="i != 0 && section.type == 'crow_fly'" >Arrivée</ng-template>
+          <div *ngIf="section.from?.name != null">
+            {{ section.from?.name }} → {{ section.to?.name }}
+          </div>
+          <div>
+            Départ : {{ section.departure_date_time | date:'dd/MM/yyyy HH:mm:ss' }} - Arrivée : {{ section.arrival_date_time | date:'dd/MM/yyyy HH:mm:ss' }}
+          </div>
+        </mat-step>
+      </mat-horizontal-stepper>
+    </mat-expansion-panel>
+  </mat-card>
+</div>
+
+
+<div style="display: flex;max-width: 100%" *ngIf="!showV1">
+  <mat-card style="flex: 1">
+    <mat-card-header>
+      <mat-card-title>Voyages enregistrés dans le cloud</mat-card-title>
+    </mat-card-header>
+    <mat-expansion-panel *ngFor="let journey of journeysCloud | async">
+      <mat-expansion-panel-header style="min-height: 70px;">
+        <mat-panel-title style="width: 300px;">
+          {{ journey.sections[0].from.stop_area.name }} → {{ journey.sections[journey.sections.length - 1].to.stop_area.name }}
+        </mat-panel-title>
+        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'best'">
+          <mat-icon>grade</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le meilleur</div>
+        </mat-panel-title>
+        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'rapid' || journey.type == 'fastest'">
+          <mat-icon>timer</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le plus rapide</div>
+        </mat-panel-title>
+        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'comfort'">
+          <mat-icon>weekend</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le plus confortable</div>
+        </mat-panel-title>
+        <mat-panel-title style="width: 200px;" *ngIf="journey.type == 'less_fallback_walk'">
+          <mat-icon>child_care</mat-icon><div style="margin-top: 4px; margin-left: 5px;">Le moins fatiguant</div>
+        </mat-panel-title>
+        <mat-panel-description>
+          Heure de départ : {{ journey.departure_date_time | date:'dd/MM/yyyy HH:mm:ss' }}
+        </mat-panel-description>
+        <mat-panel-description>
+          Heure d'arrivée : {{ journey.arrival_date_time | date:'dd/MM/yyyy HH:mm:ss' }}
+        </mat-panel-description>
+        <mat-panel-description>
+          Durée : {{ journey.duration | hoursMinutesSeconds }}
+        </mat-panel-description>
+        <mat-panel-description>
+          Distance : {{ journey.distance }} km
+        </mat-panel-description>
+        <mat-panel-description>
+          Prix : <span class="prix-convert" style="margin-left: 3px">{{ journey.prix }}</span>
+          <mat-select (click)="foo($event);getCurrentMonnaie()" (onClose)="convert()" [(ngModel)]="monnaieAll" style="margin-left:10px;max-width: 60px;max-height: 10px;">
+            <mat-option *ngFor="let monnaie of monnaies" [value]="monnaie.value">
+              {{ monnaie.label }}
+            </mat-option>
+          </mat-select>
+        </mat-panel-description>
+        <mat-panel-description>
+          <button mat-raised-button color="primary" (click)="foo($event); deleteJourney(journey);" [disabled]="loading">Supprimer</button>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-horizontal-stepper>
+        <mat-step *ngFor="let section of journey.sections;let i = index;" [completed]="false">
+          <ng-template matStepLabel *ngIf="i == 0 && section.type == 'crow_fly'" >Départ</ng-template>
+          <ng-template matStepLabel *ngIf="section.type == 'public_transport'" >Transport public</ng-template>
+          <ng-template matStepLabel *ngIf="section.type == 'transfer'" >Transfert</ng-template>
+          <ng-template matStepLabel *ngIf="section.type == 'waiting'" >Attente</ng-template>
+          <ng-template matStepLabel *ngIf="i != 0 && section.type == 'crow_fly'" >Arrivée</ng-template>
+          <div *ngIf="section.from?.name != null">
+            {{ section.from?.name }} → {{ section.to?.name }}
+          </div>
+          <div>
+            Départ : {{ section.departure_date_time | date:'dd/MM/yyyy HH:mm:ss' }} - Arrivée : {{ section.arrival_date_time | date:'dd/MM/yyyy HH:mm:ss' }}
+          </div>
+        </mat-step>
+      </mat-horizontal-stepper>
+    </mat-expansion-panel>
+  </mat-card>
 </div>
 
 <div *ngIf="showDiagnostic">

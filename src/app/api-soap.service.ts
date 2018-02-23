@@ -28,7 +28,7 @@ export class ApiSoapService {
       </soapenv:Envelope>`;
 
     return new Promise( (resolve, reject) => {
-      return this.http.post('http://localhost:8080/INFO802_TP_SDP_war_exploded/services/SDP?wsdl', request, {
+      return this.http.post('http://dfb26df6.ngrok.io/INFO802_TP_SDP_war_exploded/services/SDP?wsdl', request, {
         headers: new HttpHeaders().set('Content-Type', 'text/xml'),
         responseType: 'text'
       }).subscribe(data => {
@@ -58,7 +58,35 @@ export class ApiSoapService {
       </soapenv:Envelope>`;
 
     return new Promise((resolve, reject) => {
-      return this.http.post('http://localhost:8080/INFO802_TP_SDP_war_exploded/services/SDP?wsdl', request, {
+      return this.http.post('http://dfb26df6.ngrok.io/INFO802_TP_SDP_war_exploded/services/SDP?wsdl', request, {
+        headers: new HttpHeaders().set('Content-Type', 'text/xml'),
+        responseType: 'text'
+      }).subscribe(data => {
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(data, 'text/xml');
+        resolve({
+          result : xml.getElementsByTagName('return')[0].textContent,
+          xml : new XMLSerializer().serializeToString(xml)
+        });
+      }, err => {
+        reject(err);
+      });
+    });
+  }
+
+  public getPrixWithDistance(distance: number) {
+    const request =
+      `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tro="http://trouvetontrain/">
+         <soapenv:Header/>
+         <soapenv:Body>
+            <tro:getPrice>
+               <arg0>${distance}</arg0>
+            </tro:getPrice>
+         </soapenv:Body>
+      </soapenv:Envelope>`;
+
+    return new Promise((resolve, reject) => {
+      return this.http.post('http://dfb26df6.ngrok.io/INFO802_TP_SDP_war_exploded/services/SDP?wsdl', request, {
         headers: new HttpHeaders().set('Content-Type', 'text/xml'),
         responseType: 'text'
       }).subscribe(data => {
@@ -96,7 +124,7 @@ export class ApiSoapService {
         const parser = new DOMParser();
         const xml = parser.parseFromString(data, 'text/xml');
         resolve({
-          result : xml.getElementsByTagName('GetConversionAmountResult')[0].textContent,
+          result : this.precisionRound(xml.getElementsByTagName('GetConversionAmountResult')[0].textContent, 2),
           xml : new XMLSerializer().serializeToString(xml)
         });
       }, err => {
@@ -131,5 +159,11 @@ export class ApiSoapService {
         reject(err);
       });
     });
+  }
+
+
+  private precisionRound(number, precision) {
+    const factor = Math.pow(10, precision);
+    return Math.round(number * factor) / factor;
   }
 }

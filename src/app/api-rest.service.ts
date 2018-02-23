@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ApiSoapService } from './api-soap.service';
 
 @Injectable()
 export class ApiRestService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private apiSoap: ApiSoapService) {
   }
 
   public getStopAreas() {
@@ -63,19 +64,51 @@ export class ApiRestService {
       this.http.get(URL, {
         headers: headers
       }).subscribe(data => {
-        data['journeys'].forEach(obj => {
-          journeys.push({
-            sections: obj.sections,
-            type: obj.type,
-            departure_date_time: obj.departure_date_time,
-            arrival_date_time: obj.arrival_date_time,
-            duration: obj.duration
+        if ( data['journeys'] !== undefined ) {
+          data['journeys'].forEach(journeys_data => {
+            const promiseArray = [];
+            journeys_data.sections.forEach(sections => {
+              if (sections.type === 'public_transport') {
+                const lat_v1 = sections.from.stop_point.coord.lat;
+                const lon_v1 = sections.from.stop_point.coord.lon;
+                const lat_v2 = sections.to.stop_point.coord.lat;
+                const lon_v2 = sections.to.stop_point.coord.lon;
+
+                promiseArray.push(
+                  new Promise((resolve0) => {
+                    this.apiSoap.getDistance(lat_v1, lon_v1, lat_v2, lon_v2).then(
+                      ({result}) => {
+                        resolve0(parseInt(result, 10) / 1000);
+                      });
+                  }));
+              }
+            });
+
+            Promise.all(promiseArray).then((results) => {
+              const distance = (results.map(Number)).reduce((a, b) => this.precisionRound(a + b, 1), 0);
+              this.apiSoap.getPrixWithDistance(distance).then(({result}) => {
+                journeys.push({
+                  sections: journeys_data.sections,
+                  type: journeys_data.type,
+                  departure_date_time: journeys_data.departure_date_time,
+                  arrival_date_time: journeys_data.arrival_date_time,
+                  duration: journeys_data.duration,
+                  distance: distance,
+                  prix: this.precisionRound(parseFloat(result), 2)
+                })
+              });
+            });
           });
-        });
+        }
         resolve(journeys);
       }, err => {
         reject(err)
       });
     });
+  }
+
+  private precisionRound(number, precision) {
+    const factor = Math.pow(10, precision);
+    return Math.round(number * factor) / factor;
   }
 }

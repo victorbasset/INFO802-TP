@@ -5,4 +5,12 @@
 
 export const environment = {
   production: false,
+  firebase: {
+    apiKey: 'AIzaSyAFcqnKevpPDJMGUDCO_WIyEUUO5Bd2PA4',
+    authDomain: 'trouvetontrain-sncf.firebaseapp.com',
+    databaseURL: 'https://trouvetontrain-sncf.firebaseio.com',
+    projectId: 'trouvetontrain-sncf',
+    storageBucket: 'trouvetontrain-sncf.appspot.com',
+    messagingSenderId: '727438676287'
+  }
 };
